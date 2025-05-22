@@ -23,7 +23,7 @@ interface SidebarWrapperProps {
   isAdmin?: boolean
 }
 
-export function SidebarWrapper({ children, isAdmin = false }: SidebarWrapperProps) {
+export function SidebarWrapper({ children, isAdmin = true }: SidebarWrapperProps) {
   return (
     <SidebarProvider defaultOpen={true}>
       <div className="flex min-h-screen w-full">
@@ -55,7 +55,7 @@ function AppSidebar({ isAdmin = false }: AppSidebarProps) {
     <Sidebar>
       <SidebarHeader className="flex flex-col gap-0 px-2 py-4">
         <div className="flex items-center gap-2 px-2">
-          <div className="h-8 w-8 rounded-full bg-purple-600 flex items-center justify-center text-white font-bold">
+          <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-white font-bold">
             TP
           </div>
           <span className="text-lg font-bold">TeamPulse</span>

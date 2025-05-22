@@ -34,7 +34,7 @@ export default function SignupPage() {
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
           <div className="flex justify-center mb-4">
-            <div className="h-10 w-10 rounded-full bg-purple-600 flex items-center justify-center text-white font-bold">
+            <div className="h-10 w-10 rounded-full bg-primary flex items-center justify-center text-white font-bold">
               TP
             </div>
           </div>
