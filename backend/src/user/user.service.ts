@@ -9,7 +9,7 @@ export class UserService {
     const { data, error } = await this.supabaseService
       .getClient()
       .from('users')
-      .select('id, email, role')
+      .select('id, email, role, full_name')
       .eq('id', userId)
       .single();
 

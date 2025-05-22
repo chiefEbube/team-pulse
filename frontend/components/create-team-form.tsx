@@ -6,55 +6,69 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
+import { CardContent, CardFooter } from "./ui/card"
+import { Alert, AlertDescription } from "./ui/alert"
+import { createTeam } from "@/lib/api"
+import { toast } from "sonner"
 
 export function CreateTeamForm() {
-  const [teamName, setTeamName] = useState("")
-  const [teamDescription, setTeamDescription] = useState("")
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [teamName, setTeamName] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsSubmitting(true)
+    e.preventDefault();
+    setError(null);
 
-    // In a real app, we would submit to an API
-    // For demo purposes, we'll just simulate a delay
-    setTimeout(() => {
-      setIsSubmitting(false)
-      // Reset form or show success message
-      alert("Team created successfully!")
-      setTeamName("")
-      setTeamDescription("")
-    }, 1000)
-  }
+    if (!teamName.trim()) {
+      setError('Team name is required');
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      await createTeam(teamName.trim());
+
+      toast("Team created", {
+        description: "Your team has been created successfully",
+      })
+
+      setTeamName('');
+    } catch (error: any) {
+      console.error('Error creating team:', error);
+      setError(error.message || 'Failed to create team. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="space-y-2">
-        <Label htmlFor="team-name">Team Name</Label>
-        <Input
-          id="team-name"
-          placeholder="E.g., Frontend Team"
-          value={teamName}
-          onChange={(e) => setTeamName(e.target.value)}
-          required
-        />
-      </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="team-description">Description</Label>
-        <Textarea
-          id="team-description"
-          placeholder="Brief description of the team's purpose"
-          value={teamDescription}
-          onChange={(e) => setTeamDescription(e.target.value)}
-          rows={3}
-        />
-      </div>
+    <form onSubmit={handleSubmit}className="max-w-md space-y-4">
+      <CardContent className="space-y-4">
+        {error && (
+          <Alert className="bg-red-50 text-red-800 border-red-200">
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
 
-      <Button type="submit" disabled={isSubmitting}>
-        {isSubmitting ? "Creating..." : "Create Team"}
-      </Button>
+        <div className="space-y-2">
+          <Label htmlFor="teamName">Team Name</Label>
+          <Input
+            id="teamName"
+            placeholder="E.g., Frontend Team"
+            value={teamName}
+            onChange={(e) => setTeamName(e.target.value)}
+            required
+          />
+        </div>
+      </CardContent>
+      <CardFooter>
+        <Button type="submit" className="w-full" disabled={isSubmitting}>
+          {isSubmitting ? 'Creating...' : 'Create Team'}
+        </Button>
+      </CardFooter>
     </form>
   )
 }

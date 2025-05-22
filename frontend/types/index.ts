@@ -4,8 +4,7 @@ export interface User {
   id: string;
   email: string;
   role: UserRole;
-  name?: string;
-  avatar_url?: string;
+  full_name?: string;
 }
 
 export interface Team {

@@ -4,7 +4,7 @@ import type React from "react"
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { LayoutDashboard, Users, Settings } from "lucide-react"
+import { LayoutDashboard, Users, Settings, LogOut } from "lucide-react"
 import {
   Sidebar,
   SidebarContent,
@@ -17,22 +17,35 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Button } from "./ui/button"
+import { useAuth } from "@/context/auth"
+import { User } from "@/types"
 
 interface SidebarWrapperProps {
   children: React.ReactNode
-  isAdmin?: boolean
 }
 
-export function SidebarWrapper({ children, isAdmin = true }: SidebarWrapperProps) {
+function getInitials(name?: string) {
+  if (!name) return ""
+  return name
+    .split(" ")
+    .map((part) => part[0])
+    .join("")
+    .toUpperCase()
+}
+
+export function SidebarWrapper({ children }: SidebarWrapperProps) {
+  const { user, signOut } = useAuth();
+  const isAdmin = user?.role === "admin"
   return (
     <SidebarProvider defaultOpen={true}>
       <div className="flex min-h-screen w-full">
-        <AppSidebar isAdmin={isAdmin} />
+        <AppSidebar isAdmin={isAdmin} user={user} signOut={signOut}/>
         <div className="flex flex-1 flex-col">
           <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background px-4 sm:px-6">
             <SidebarTrigger />
             <div className="ml-auto flex items-center gap-4">
-              <UserNav />
+              <UserNav user={user}/>
             </div>
           </header>
           <main className="flex-1 p-4 sm:p-6">{children}</main>
@@ -43,10 +56,12 @@ export function SidebarWrapper({ children, isAdmin = true }: SidebarWrapperProps
 }
 
 interface AppSidebarProps {
-  isAdmin?: boolean
+  isAdmin?: boolean,
+  user?: User | null
+  signOut?: () => void
 }
 
-function AppSidebar({ isAdmin = false }: AppSidebarProps) {
+function AppSidebar({ isAdmin, user, signOut }: AppSidebarProps) {
   const pathname = usePathname()
   const adminLink = isAdmin ? "/admin" : "/access-denied"
   const isAdminPage = pathname === "/admin" || pathname === "/access-denied"
@@ -92,26 +107,34 @@ function AppSidebar({ isAdmin = false }: AppSidebarProps) {
         </SidebarMenu>
       </SidebarContent>
       <SidebarFooter className="border-t p-4">
-        <div className="flex items-center gap-3 px-2">
+        <div className="flex items-center gap-3 px-2 mb-4">
           <Avatar className="h-9 w-9">
-            <AvatarImage src="/placeholder.svg?height=36&width=36" alt="Avatar" />
-            <AvatarFallback>JD</AvatarFallback>
+            <AvatarFallback>{getInitials(user?.full_name)}</AvatarFallback>
           </Avatar>
           <div className="flex flex-col">
-            <span className="text-sm font-medium">John Doe</span>
-            <span className="text-xs text-muted-foreground">john@example.com</span>
+            <span className="text-sm font-medium">{user?.full_name}</span>
+            <span className="text-xs text-muted-foreground">{user?.email}</span>
           </div>
         </div>
+        <div className="flex items-center gap-3 px-2 mb-7">
+          <Button
+            variant="ghost"
+            className="w-full justify-start py-4"
+            onClick={() => signOut?.()}
+          >
+            <LogOut className="mr-2 h-4 w-4" />
+            Log out
+          </Button>
+        </div>
       </SidebarFooter>
-    </Sidebar>
+    </Sidebar >
   )
 }
 
-function UserNav() {
+function UserNav({ user }: { user: User | null }) {
   return (
     <Avatar className="h-9 w-9 cursor-pointer">
-      <AvatarImage src="/placeholder.svg?height=36&width=36" alt="Avatar" />
-      <AvatarFallback>JD</AvatarFallback>
+      <AvatarFallback>{getInitials(user?.full_name)}</AvatarFallback>
     </Avatar>
   )
 }
