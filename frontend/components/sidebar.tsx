@@ -48,6 +48,8 @@ interface AppSidebarProps {
 
 function AppSidebar({ isAdmin = false }: AppSidebarProps) {
   const pathname = usePathname()
+  const adminLink = isAdmin ? "/admin" : "/access-denied"
+  const isAdminPage = pathname === "/admin" || pathname === "/access-denied"
 
   return (
     <Sidebar>
@@ -79,16 +81,14 @@ function AppSidebar({ isAdmin = false }: AppSidebarProps) {
             </SidebarMenuButton>
           </SidebarMenuItem>
 
-          {isAdmin && (
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild isActive={pathname === "/admin"} tooltip="Admin">
-                <Link href="/admin">
-                  <Settings className="h-5 w-5" />
-                  <span>Admin</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          )}
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild isActive={isAdminPage} tooltip="Admin">
+              <Link href={adminLink}>
+                <Settings className="h-5 w-5" />
+                <span>Admin Panel</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
         </SidebarMenu>
       </SidebarContent>
       <SidebarFooter className="border-t p-4">

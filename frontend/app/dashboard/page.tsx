@@ -1,9 +1,7 @@
 import { SidebarWrapper } from "@/components/sidebar"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { PlusCircle, RefreshCw } from "lucide-react"
 import { StatusUpdateForm } from "@/components/status-update-form"
 
 export default function DashboardPage() {
@@ -90,16 +88,6 @@ export default function DashboardPage() {
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
             <p className="text-muted-foreground">Track your team's status and progress</p>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" className="gap-1">
-              <RefreshCw className="h-4 w-4" />
-              <span>Refresh</span>
-            </Button>
-            <Button size="sm" className="gap-1">
-              <PlusCircle className="h-4 w-4" />
-              <span>Update Status</span>
-            </Button>
           </div>
         </div>
 
