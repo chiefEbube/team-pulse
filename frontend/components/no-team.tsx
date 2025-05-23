@@ -1,5 +1,5 @@
-import { Clock, Users } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
+import { Users } from "lucide-react";
+import { Card, CardDescription, CardHeader, CardTitle } from "./ui/card";
 
 export default function NoTeam() {
      return (
@@ -14,7 +14,7 @@ export default function NoTeam() {
           <CardHeader>
             <div className="flex items-center gap-2">
               <Users className="h-5 w-5 text-primary" />
-              <CardTitle>You're not in any teams yet</CardTitle>
+              <CardTitle>{`You're not in any teams yet`}</CardTitle>
             </div>
             <CardDescription>
               You need to be added to a team before you can update your status or view team information.
