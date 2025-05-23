@@ -53,7 +53,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           if (response.ok) {
             const userData = await response.json();
             setUser(userData);
-            console.log('User data:', userData);
           }
         } catch (err) {
           console.error('Error fetching user data:', err);

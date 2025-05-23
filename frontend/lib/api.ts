@@ -1,4 +1,4 @@
-import { Status, Team, TeamMember, User } from '@/types';
+import { Status, Team, User } from '@/types';
 
 const BASE_API_URL = process.env.NEXT_PUBLIC_API_URL
 
@@ -68,8 +68,4 @@ export async function updateStatus(
       message,
     }),
   });
-}
-
-export async function getTeamMembers(teamId: string): Promise<TeamMember[]> {
-  return fetchWithAuth(`/team/${teamId}/members`);
 }

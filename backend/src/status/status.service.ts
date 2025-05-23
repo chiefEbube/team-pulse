@@ -66,7 +66,13 @@ export class StatusService {
         *,
         users:user_id (
           id,
-          email
+          email,
+          full_name,
+          role
+        ),
+        teams:team_id (
+          id,
+          name
         )
       `)
       .eq('team_id', teamId)

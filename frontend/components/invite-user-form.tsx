@@ -36,7 +36,6 @@ export function InviteUserForm() {
       try {
         const userTeams = await getUserTeams();
         setTeams(userTeams);
-        console.log('Fetched teams:', userTeams);
         if (userTeams.length > 0) {
           setTeamId(userTeams[0].team.id);
         }
