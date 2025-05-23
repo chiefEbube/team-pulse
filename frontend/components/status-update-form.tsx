@@ -78,7 +78,7 @@ export function StatusUpdateForm() {
   };
 
   return (
-    <Card>
+    <Card className="max-w-xl">
       <CardHeader>
         <CardTitle>Update Your Status</CardTitle>
         <CardDescription>

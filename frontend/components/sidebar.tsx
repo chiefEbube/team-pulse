@@ -4,7 +4,7 @@ import type React from "react"
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { LayoutDashboard, Users, Settings, LogOut } from "lucide-react"
+import { LayoutDashboard, Users, Settings, LogOut, ChevronDown, ChevronRight } from "lucide-react"
 import {
   Sidebar,
   SidebarContent,
@@ -19,7 +19,9 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "./ui/button"
 import { useAuth } from "@/context/auth"
-import { User } from "@/types"
+import { Team, User } from "@/types"
+import { useEffect, useState } from "react"
+import { getUserTeams } from "@/lib/api"
 
 interface SidebarWrapperProps {
   children: React.ReactNode
@@ -40,12 +42,12 @@ export function SidebarWrapper({ children }: SidebarWrapperProps) {
   return (
     <SidebarProvider defaultOpen={true}>
       <div className="flex min-h-screen w-full">
-        <AppSidebar isAdmin={isAdmin} user={user} signOut={signOut}/>
+        <AppSidebar isAdmin={isAdmin} user={user} signOut={signOut} />
         <div className="flex flex-1 flex-col">
           <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background px-4 sm:px-6">
             <SidebarTrigger />
             <div className="ml-auto flex items-center gap-4">
-              <UserNav user={user}/>
+              <UserNav user={user} />
             </div>
           </header>
           <main className="flex-1 p-4 sm:p-6">{children}</main>
@@ -65,6 +67,22 @@ function AppSidebar({ isAdmin, user, signOut }: AppSidebarProps) {
   const pathname = usePathname()
   const adminLink = isAdmin ? "/admin" : "/access-denied"
   const isAdminPage = pathname === "/admin" || pathname === "/access-denied"
+  const [teams, setTeams] = useState<Team[]>([]);
+  const [teamsExpanded, setTeamsExpanded] = useState(true);
+
+  useEffect(() => {
+    const fetchTeams = async () => {
+      try {
+        const userTeams = await getUserTeams();
+        console.log("TEAMS", userTeams);
+        setTeams(userTeams);
+      } catch (error) {
+        console.error('Error fetching teams:', error);
+      }
+    };
+
+    fetchTeams();
+  }, [user]);
 
   return (
     <Sidebar>
@@ -88,12 +106,36 @@ function AppSidebar({ isAdmin, user, signOut }: AppSidebarProps) {
           </SidebarMenuItem>
 
           <SidebarMenuItem>
-            <SidebarMenuButton asChild isActive={pathname === "/team"} tooltip="Team">
-              <Link href="/team">
-                <Users className="h-5 w-5" />
-                <span>Team</span>
-              </Link>
+            <SidebarMenuButton onClick={() => setTeamsExpanded(!teamsExpanded)}>
+              {teamsExpanded ? (
+                <ChevronDown className="h-4 w-4 mr-" />
+              ) : (
+                <ChevronRight className="h-4 w-4 mr-1" />
+              )}
+              My Teams
             </SidebarMenuButton>
+
+            {teamsExpanded && (
+              <div className="space-y-1 ml-4">
+                {teams.length > 0 ? (
+                  teams.map(({ team }) => (
+                    <Button
+                      key={team.id}
+                      variant={pathname === `/teams/${team.id}` ? 'secondary' : 'ghost'}
+                      className="w-full justify-start"
+                      asChild
+                    >
+                      <Link href={`/teams/${team.id}`}>
+                        <Users className="mr-2 h-4 w-4" />
+                        {team.name}
+                      </Link>
+                    </Button>
+                  ))
+                ) : (
+                  <p className="text-sm text-muted-foreground py-2">No teams found</p>
+                )}
+              </div>
+            )}
           </SidebarMenuItem>
 
           <SidebarMenuItem>
@@ -114,6 +156,7 @@ function AppSidebar({ isAdmin, user, signOut }: AppSidebarProps) {
           <div className="flex flex-col">
             <span className="text-sm font-medium">{user?.full_name}</span>
             <span className="text-xs text-muted-foreground">{user?.email}</span>
+            <span className="text-xs text-muted-foreground">{user?.role}</span>
           </div>
         </div>
         <div className="flex items-center gap-3 px-2 mb-7">
