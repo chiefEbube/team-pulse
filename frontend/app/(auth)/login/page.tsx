@@ -1,5 +1,6 @@
 import { LoginForm } from '@/components/auth/login-form';
 import { Metadata } from 'next';
+import { Suspense } from 'react';
 
 export const metadata: Metadata = {
   title: 'Login | TeamPulse',
@@ -13,7 +14,7 @@ export default function LoginPage() {
         <div className="max-w-md p-8 text-white">
           <h1 className="text-3xl font-bold mb-6">TeamPulse</h1>
           <p className="text-lg mb-8">
-            Your team's availability and status updates in one place.
+            {`Your team's availability and status updates in one place.`}
           </p>
           <div className="space-y-4">
             <div className="flex items-center space-x-3">
@@ -22,7 +23,7 @@ export default function LoginPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
               </div>
-              <span>Track who's working on what</span>
+              <span>{`Track who's working on what`}</span>
             </div>
             <div className="flex items-center space-x-3">
               <div className="rounded-full bg-primary-foreground/20 p-2">
@@ -44,7 +45,9 @@ export default function LoginPage() {
         </div>
       </div>
       <div className="flex-1 flex items-center justify-center p-8">
-        <LoginForm />
+        <Suspense fallback={<div className="animate-pulse w-full max-w-md h-96 bg-muted rounded-md"></div>}>
+          <LoginForm />
+        </Suspense>
       </div>
     </div>
   );

@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { getUserTeams, updateStatus } from '@/lib/api';
 import {
@@ -19,9 +18,6 @@ import { toast } from 'sonner';
 
 export function StatusUpdateForm() {
   const [teams, setTeams] = useState<Team[]>([]);
-  const [selectedTeamId, setSelectedTeamId] = useState<string>('');
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [teamId, setTeamId] = useState<string>(teams.length > 0 ? teams[0].team.id : '');
   const [statusType, setStatusType] = useState<'WORKING' | 'ON_LEAVE' | 'BLOCKED' | 'AVAILABLE'>('WORKING');
   const [message, setMessage] = useState('');
@@ -32,14 +28,8 @@ export function StatusUpdateForm() {
       const userTeams = await getUserTeams();
       setTeams(userTeams);
 
-      if (userTeams.length > 0) {
-        setSelectedTeamId(userTeams[0].team.id);
-      }
     } catch (error) {
       console.error('Error fetching teams:', error);
-      setError('Failed to load teams. Please try again later.');
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -82,7 +72,7 @@ export function StatusUpdateForm() {
       <CardHeader>
         <CardTitle>Update Your Status</CardTitle>
         <CardDescription>
-          Let your team know what you're working on and your availability.
+          {`Let your team know what you're working on and your availability.`}
         </CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -116,7 +106,7 @@ export function StatusUpdateForm() {
             <Label htmlFor="statusType">Status</Label>
             <Select
               value={statusType}
-              onValueChange={(value) => setStatusType(value as any)}
+              onValueChange={(value) => setStatusType(value as 'WORKING' | 'ON_LEAVE' | 'BLOCKED' | 'AVAILABLE')}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select your status" />

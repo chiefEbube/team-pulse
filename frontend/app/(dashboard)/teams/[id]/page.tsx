@@ -4,17 +4,11 @@ import type React from "react"
 
 import { useEffect, useState } from "react"
 import { useParams } from "next/navigation"
-import { getTeamStatuses, updateStatus, getUserTeams } from "@/lib/api"
-import { Button } from "@/components/ui/button"
+import { getTeamStatuses, getUserTeams } from "@/lib/api"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
-import { RefreshCw, AlertCircle } from "lucide-react"
-import { SidebarWrapper } from "@/components/sidebar"
+import { AlertCircle } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import type { Status, Team } from "@/types"
 
@@ -26,12 +20,6 @@ export default function TeamDetailPage() {
   const [statuses, setStatuses] = useState<Status[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-
-  // Status update form state
-  const [statusType, setStatusType] = useState<"WORKING" | "ON_LEAVE" | "BLOCKED" | "AVAILABLE">("WORKING")
-  const [statusMessage, setStatusMessage] = useState("")
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [updateSuccess, setUpdateSuccess] = useState(false)
 
   // Fetch team data and statuses
   useEffect(() => {
@@ -67,51 +55,7 @@ export default function TeamDetailPage() {
     }
   }, [teamId])
 
-  // Handle status update submission
-  const handleStatusUpdate = async (e: React.FormEvent) => {
-    e.preventDefault()
 
-    if (!teamId) return
-
-    try {
-      setIsSubmitting(true)
-      setError(null)
-
-      await updateStatus(teamId, statusType, statusMessage)
-
-      // Refresh statuses after update
-      const updatedStatuses = await getTeamStatuses(teamId)
-      setStatuses(updatedStatuses)
-
-      // Show success message
-      setUpdateSuccess(true)
-      setTimeout(() => setUpdateSuccess(false), 3000)
-
-      // Reset form
-      setStatusMessage("")
-    } catch (err) {
-      console.error("Error updating status:", err)
-      setError("Failed to update status. Please try again.")
-    } finally {
-      setIsSubmitting(false)
-    }
-  }
-
-  // Handle refresh button click
-  const handleRefresh = async () => {
-    try {
-      setIsLoading(true)
-      setError(null)
-
-      const teamStatuses = await getTeamStatuses(teamId)
-      setStatuses(teamStatuses)
-    } catch (err) {
-      console.error("Error refreshing statuses:", err)
-      setError("Failed to refresh team data. Please try again.")
-    } finally {
-      setIsLoading(false)
-    }
-  }
 
   return (
     <div className="space-y-6">
@@ -122,10 +66,6 @@ export default function TeamDetailPage() {
             {isLoading ? "Loading team details..." : `${statuses.length} team members`}
           </p>
         </div>
-        <Button variant="outline" size="sm" className="gap-1" onClick={handleRefresh} disabled={isLoading}>
-          <RefreshCw className="h-4 w-4" />
-          <span>Refresh</span>
-        </Button>
       </div>
 
       {error && (

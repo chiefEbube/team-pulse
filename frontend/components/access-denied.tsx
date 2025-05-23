@@ -15,7 +15,7 @@ export default function AccessDenied() {
           </div>
           <CardTitle className="text-2xl font-bold">Access Denied</CardTitle>
           <CardDescription className="text-base mt-2">
-            You don't have permission to access the Admin Panel
+           {`You don't have permission to access the Admin Panel`}
           </CardDescription>
         </CardHeader>
         <CardContent className="text-center text-muted-foreground pb-2">

@@ -35,9 +35,13 @@ export function CreateTeamForm() {
       })
 
       setTeamName('');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error creating team:', error);
-      setError(error.message || 'Failed to create team. Please try again.');
+      if (error && typeof error === 'object' && 'message' in error) {
+        setError((error as { message?: string }).message || 'Failed to create team. Please try again.');
+      } else {
+        setError('Failed to create team. Please try again.');
+      }
     } finally {
       setIsSubmitting(false);
     }

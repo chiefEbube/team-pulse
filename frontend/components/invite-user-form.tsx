@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { inviteUserToTeam, getUserTeams } from '@/lib/api';
 import { Team } from '@/types';
@@ -73,9 +72,13 @@ export function InviteUserForm() {
       });
 
       setEmail('');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error inviting user:', error);
-      setError(error.message || 'Failed to invite user. Please try again.');
+      if (error && typeof error === 'object' && 'message' in error) {
+        setError((error as { message?: string }).message || 'Failed to invite user. Please try again.');
+      } else {
+        setError('Failed to invite user. Please try again.');
+      }
     } finally {
       setIsSubmitting(false);
     }

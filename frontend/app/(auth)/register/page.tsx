@@ -13,7 +13,7 @@ export default function RegisterPage() {
         <div className="max-w-md p-8 text-white">
           <h1 className="text-3xl font-bold mb-6">TeamPulse</h1>
           <p className="text-lg mb-8">
-            Join TeamPulse to start tracking your team's status and availability in real-time.
+            {`Join TeamPulse to start tracking your team's status and availability in real-time.`}
           </p>
           <div className="space-y-4">
             <div className="flex items-center space-x-3">
