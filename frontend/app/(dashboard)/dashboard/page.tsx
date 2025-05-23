@@ -9,12 +9,14 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { AlertCircle } from "lucide-react"
 import type { Status } from "@/types"
 import { useAuth } from "@/context/auth"
+import NoTeam from "@/components/no-team"
 
 export default function DashboardPage() {
   const { user } = useAuth()
   const [currentStatus, setCurrentStatus] = useState<Status | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [hasTeam, setHasTeam] = useState(false)
 
   useEffect(() => {
     const fetchUserStatus = async () => {
@@ -24,28 +26,29 @@ export default function DashboardPage() {
         setIsLoading(true)
         setError(null)
 
-        // 1. Get all teams the user belongs to
         const teams = await getUserTeams()
 
         if (teams.length === 0) {
           setIsLoading(false)
+          setHasTeam(false)
           return
         }
 
-        // 2. Fetch statuses for each team
+        setHasTeam(true)
+
+        // Fetch statuses for each team
         const statusPromises = teams.map((team) => getTeamStatuses(team.team.id))
         const teamStatuses = await Promise.all(statusPromises)
 
-        // 3. Flatten the array of status arrays
+        // Flatten the array of status arrays
         const allStatuses = teamStatuses.flat()
 
-        // 4. Filter statuses to find those belonging to the current user
+        // Filter statuses to find those belonging to the current user
         const userStatuses = allStatuses.filter((status) => status.user_id === user.id)
 
-        // 5. Sort by updated_at to get the most recent status
+        // Sort by updated_at to get the most recent status
         userStatuses.sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())
 
-        // 6. Set the most recent status (if any)
         if (userStatuses.length > 0) {
           setCurrentStatus(userStatuses[0])
         }
@@ -101,6 +104,13 @@ export default function DashboardPage() {
       .split(" ")
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(" ")
+  }
+
+  // If user has no teams, show a special message
+  if (!isLoading && !hasTeam) {
+    return (
+      <NoTeam />
+    )
   }
 
   return (
