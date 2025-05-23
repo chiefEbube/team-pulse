@@ -45,7 +45,7 @@ export function CreateTeamForm() {
 
   return (
 
-    <form onSubmit={handleSubmit}className="max-w-md space-y-4">
+    <form onSubmit={handleSubmit}className="max-w-xl space-y-4">
       <CardContent className="space-y-4">
         {error && (
           <Alert className="bg-red-50 text-red-800 border-red-200">

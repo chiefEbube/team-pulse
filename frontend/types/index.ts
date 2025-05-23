@@ -8,10 +8,11 @@ export interface User {
 }
 
 export interface Team {
-  id: string;
-  name: string;
-  created_at: string;
-  created_by: string;
+  role: string,
+  team: {
+    id: string,
+    name: string,
+  }
 }
 
 export interface Status {

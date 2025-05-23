@@ -30,7 +30,7 @@ export default function Admin() {
           <TabsTrigger value="manage">Team Management</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="teams" className="space-y-4">
+        <TabsContent value="teams" className="space-y-4 max-w-xl">
           <Card>
             <CardHeader>
               <CardTitle>Create Team</CardTitle>
@@ -42,7 +42,7 @@ export default function Admin() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="invite" className="space-y-4">
+        <TabsContent value="invite" className="space-y-4 max-w-xl">
           <Card>
             <CardHeader>
               <CardTitle>Invite User</CardTitle>
