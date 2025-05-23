@@ -38,7 +38,7 @@ export async function getUserTeams(): Promise<Team[]> {
 }
 
 export async function getTeamStatuses(teamId: string): Promise<Status[]> {
-  return fetchWithAuth(`/team/${teamId}/statuses`);
+  return fetchWithAuth(`/status/team/${teamId}`);
 }
 
 export async function createTeam(name: string): Promise<Team> {
@@ -56,18 +56,16 @@ export async function inviteUserToTeam(email: string, teamId: string, role: 'adm
 }
 
 export async function updateStatus(
-  teamId: string, 
-  status: 'Working' | 'On Leave' | 'Blocked' | 'Available',
-  currentTask?: string,
-  note?: string
+  teamId: string,
+  statusType: 'WORKING' | 'ON_LEAVE' | 'BLOCKED' | 'AVAILABLE',
+  message: string,
 ): Promise<Status> {
   return fetchWithAuth('/status', {
     method: 'POST',
     body: JSON.stringify({
       teamId,
-      status,
-      currentTask,
-      note,
+      statusType,
+      message,
     }),
   });
 }

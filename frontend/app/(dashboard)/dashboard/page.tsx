@@ -2,6 +2,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { StatusUpdateForm } from "@/components/status-update-form"
+import { useState } from "react";
+import { Team } from "@/types";
+import { getUserTeams } from "@/lib/api";
 
 export default function DashboardPage() {
   // Mock data for team members
@@ -92,7 +95,6 @@ export default function DashboardPage() {
       <Tabs defaultValue="team-status" className="space-y-4">
         <TabsList>
           <TabsTrigger value="team-status">Team Status</TabsTrigger>
-          <TabsTrigger value="goals">Team Goals</TabsTrigger>
           <TabsTrigger value="my-status">My Status</TabsTrigger>
         </TabsList>
 
@@ -124,40 +126,8 @@ export default function DashboardPage() {
           </div>
         </TabsContent>
 
-        <TabsContent value="goals" className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {teamGoals.map((goal) => (
-              <Card key={goal.id}>
-                <CardHeader>
-                  <CardTitle className="text-lg">{goal.title}</CardTitle>
-                  <CardDescription>Due: {goal.dueDate}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between text-sm">
-                      <span>Progress</span>
-                      <span className="font-medium">{goal.progress}%</span>
-                    </div>
-                    <div className="h-2 w-full rounded-full bg-gray-200">
-                      <div className="h-2 rounded-full bg-purple-600" style={{ width: `${goal.progress}%` }}></div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="my-status" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Update Your Status</CardTitle>
-              <CardDescription>Let your team know what you're working on and if you need help</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <StatusUpdateForm />
-            </CardContent>
-          </Card>
+        <TabsContent value="my-status" className="space-y-4 max-w-xl">
+          <StatusUpdateForm />
 
           <Card>
             <CardHeader>

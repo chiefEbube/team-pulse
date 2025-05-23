@@ -1,76 +1,151 @@
-"use client"
+'use client';
 
-import type React from "react"
-
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useEffect, useState } from 'react';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { getUserTeams, updateStatus } from '@/lib/api';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Team } from '@/types';
+import { toast } from 'sonner';
 
 export function StatusUpdateForm() {
-  const [status, setStatus] = useState("working")
-  const [currentTask, setCurrentTask] = useState("")
-  const [notes, setNotes] = useState("")
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [teams, setTeams] = useState<Team[]>([]);
+  const [selectedTeamId, setSelectedTeamId] = useState<string>('');
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [teamId, setTeamId] = useState<string>(teams.length > 0 ? teams[0].team.id : '');
+  const [statusType, setStatusType] = useState<'WORKING' | 'ON_LEAVE' | 'BLOCKED' | 'AVAILABLE'>('WORKING');
+  const [message, setMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const fetchTeams = async () => {
+    try {
+      const userTeams = await getUserTeams();
+      setTeams(userTeams);
+
+      if (userTeams.length > 0) {
+        setSelectedTeamId(userTeams[0].team.id);
+      }
+    } catch (error) {
+      console.error('Error fetching teams:', error);
+      setError('Failed to load teams. Please try again later.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchTeams();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsSubmitting(true)
+    e.preventDefault();
 
-    // In a real app, we would submit to an API
-    // For demo purposes, we'll just simulate a delay
-    setTimeout(() => {
-      setIsSubmitting(false)
-      // Reset form or show success message
-      alert("Status updated successfully!")
-    }, 1000)
-  }
+    if (!teamId) {
+      toast('Error', {
+        description: 'Please select a team',
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      await updateStatus(teamId, statusType, message);
+
+      toast('Status updated', {
+        description: 'Your status has been updated successfully',
+      });
+
+      setMessage('');
+    } catch (error) {
+      console.error('Error updating status:', error);
+      toast('Error', {
+        description: 'Failed to update status. Please try again.',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="space-y-2">
-        <Label htmlFor="status">Status</Label>
-        <Select value={status} onValueChange={setStatus}>
-          <SelectTrigger id="status">
-            <SelectValue placeholder="Select your status" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="working">Working</SelectItem>
-            <SelectItem value="meeting">In a Meeting</SelectItem>
-            <SelectItem value="break">On Break</SelectItem>
-            <SelectItem value="blocked">Blocked</SelectItem>
-            <SelectItem value="leave">On Leave</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
+    <Card>
+      <CardHeader>
+        <CardTitle>Update Your Status</CardTitle>
+        <CardDescription>
+          Let your team know what you're working on and your availability.
+        </CardDescription>
+      </CardHeader>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="team">Team</Label>
+            <Select
+              value={teamId}
+              onValueChange={setTeamId}
+              disabled={teams.length === 0}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select a team" />
+              </SelectTrigger>
+              <SelectContent>
+                {teams.map(({ team }) => (
+                  <SelectItem key={team.id} value={team.id}>
+                    {team.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {teams.length === 0 && (
+              <p className="text-sm text-muted-foreground">
+                You are not a member of any teams.
+              </p>
+            )}
+          </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="current-task">What are you working on?</Label>
-        <Input
-          id="current-task"
-          placeholder="E.g., Implementing dashboard UI"
-          value={currentTask}
-          onChange={(e) => setCurrentTask(e.target.value)}
-          required
-        />
-      </div>
+          <div className="space-y-2">
+            <Label htmlFor="statusType">Status</Label>
+            <Select
+              value={statusType}
+              onValueChange={(value) => setStatusType(value as any)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select your status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="WORKING">Working</SelectItem>
+                <SelectItem value="ON_LEAVE">On Leave</SelectItem>
+                <SelectItem value="BLOCKED">Blocked</SelectItem>
+                <SelectItem value="AVAILABLE">Available</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="notes">Additional Notes</Label>
-        <Textarea
-          id="notes"
-          placeholder="Any details or blockers to share with the team?"
-          value={notes}
-          onChange={(e) => setNotes(e.target.value)}
-          rows={3}
-        />
-      </div>
-
-      <Button type="submit" className="w-full" disabled={isSubmitting}>
-        {isSubmitting ? "Updating..." : "Update Status"}
-      </Button>
-    </form>
-  )
+          <div className="space-y-2">
+            <Label htmlFor="message">Current Task</Label>
+            <Input
+              id="currentTask"
+              placeholder="What are you working on?"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+            />
+          </div>
+        </CardContent>
+        <CardFooter>
+          <Button type="submit" className="w-full" disabled={isSubmitting || teams.length === 0}>
+            {isSubmitting ? 'Updating...' : 'Update Status'}
+          </Button>
+        </CardFooter>
+      </form>
+    </Card>
+  );
 }

@@ -27,7 +27,7 @@ export default function Admin() {
         <TabsList>
           <TabsTrigger value="teams">Teams</TabsTrigger>
           <TabsTrigger value="invite">Invite Users</TabsTrigger>
-          <TabsTrigger value="manage">Team Management</TabsTrigger>
+          <TabsTrigger value="manage">Team Status</TabsTrigger>
         </TabsList>
 
         <TabsContent value="teams" className="space-y-4 max-w-xl">
@@ -57,8 +57,8 @@ export default function Admin() {
         <TabsContent value="manage" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Team Management</CardTitle>
-              <CardDescription>View and manage team members and their roles</CardDescription>
+              <CardTitle>Team Status</CardTitle>
+              <CardDescription>View and manage status of team members</CardDescription>
             </CardHeader>
             <CardContent>
               <TeamManagement />
