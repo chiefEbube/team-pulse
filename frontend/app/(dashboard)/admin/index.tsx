@@ -46,7 +46,7 @@ export default function Admin() {
           <Card>
             <CardHeader>
               <CardTitle>Invite User</CardTitle>
-              <CardDescription>Invite a new user to join your organization</CardDescription>
+              <CardDescription>Add a new user to a team</CardDescription>
             </CardHeader>
             <CardContent>
               <InviteUserForm />
@@ -58,7 +58,7 @@ export default function Admin() {
           <Card>
             <CardHeader>
               <CardTitle>Team Status</CardTitle>
-              <CardDescription>View and manage status of team members</CardDescription>
+              <CardDescription>View status of team members</CardDescription>
             </CardHeader>
             <CardContent>
               <TeamManagement />
